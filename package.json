@@ -1,8 +1,11 @@
 {
   "name": "fantasy_games_back",
-  "version": "0.0.0-development",
+  "version": "1.0.0",
   "license": "MIT",
   "main": "./dist/index.js",
+  "engines": {
+    "node": "10.x"
+  },
   "scripts": {
     "build": "node ./util/build.js",
     "lint": "tslint --project \"tsconfig.json\"",
@@ -13,11 +16,11 @@
     "semantic-release": "semantic-release"
   },
   "_moduleAliases": {
-    "@daos": "./daos",
-    "@config": "./shared/config/config",
-    "@entities": "./entities",
-    "@shared": "./shared",
-    "@server": "./Server"
+    "@daos": "./dist/daos",
+    "@config": "./dist/shared/config/config",
+    "@entities": "./dist/entities",
+    "@shared": "./dist/shared",
+    "@server": "./dist/Server"
   },
   "dependencies": {
     "@apollo/federation": "^0.12.1",
@@ -57,8 +60,7 @@
     "tslint": "^6.0.0",
     "tslint-config-airbnb": "^5.11.2",
     "tslint-config-prettier": "^1.18.0",
-    "typescript": "^3.7.5",
-    "semantic-release": "^17.0.4"
+    "typescript": "^3.7.5"
   },
   "repository": {
     "type": "git",
