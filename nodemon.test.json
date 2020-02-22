@@ -1,0 +1,6 @@
+{
+  "watch": ["spec"],
+  "ext": "spec.ts",
+  "ignore": ["spec/support"],
+  "exec": "ts-node -r dotenv/config -r tsconfig-paths/register ./spec dotenv_config_path=./env/test.env "
+}

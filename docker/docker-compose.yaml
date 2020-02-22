@@ -1,0 +1,28 @@
+version: '3.3'
+services:
+  mongo:
+    image: mongo:4.2.1-bionic
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=mongoadmin
+      - MONGO_INITDB_ROOT_PASSWORD=secret
+    volumes:
+      - $FANTASY_MONGO_DB:/data/db
+    ports:
+      - 27017:27017
+  fantasy-games-back:
+    build:
+      context: ../
+      dockerfile: Dockerfile
+    environment:
+      - NODE_ENV=development
+      # Server
+      - PORT=3010
+      - HOST=localhost
+
+      #Mongo
+      - MONGO_COLLECTION=users
+      - MONGO_URL=mongodb://mongoadmin:secret@mongo:27017/fantasyGames
+    ports:
+      - 3010:3010
+    depends_on:
+      - mongo
