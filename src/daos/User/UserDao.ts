@@ -1,6 +1,61 @@
-import { IUser, User, IMemory } from '@entities';
+import { config } from '@config';
+import { IInputUser, IMemory, IUser } from '@entities';
 import { Db } from 'mongodb';
-import { config } from '../../shared/config/config';
+
+/**
+ * Allows to create a new user
+ * @param id user to insert the memories on
+ * @param memories memories to insert
+ * @param db Databases
+ */
+export const insertMemories = async (
+  { id, memories }: { id: string; memories: IMemory[] },
+  db: Db
+): Promise<IUser | null> => {
+  const mongodb = db.collection(config.mongo.USER_COLLECTION);
+  const result = await mongodb.updateOne(
+    { id },
+    {
+      $set: {
+        memories
+      }
+    },
+    { upsert: false }
+  );
+  const newUser = await mongodb.findOne({
+    id
+  });
+  return { ...newUser } as IUser;
+};
+
+/**
+ * Allows to create a new user
+ * @param user user to create
+ * @param db Databases
+ */
+export const newUser = async (
+  { id, name, email }: { id: string; name: string; email: string },
+  db: Db
+): Promise<IUser | null> => {
+  const mongodb = db.collection(config.mongo.USER_COLLECTION);
+  const result = await mongodb.updateOne(
+    { id },
+    {
+      $set: {
+        id,
+        name,
+        email,
+        memoryLevel: 0,
+        memories: []
+      }
+    },
+    { upsert: true }
+  );
+  const newUser = await mongodb.findOne({
+    id
+  });
+  return { ...newUser } as IUser;
+};
 
 /**
  * Gets the user on the databasese with the memorylevel up to its memories
@@ -41,9 +96,11 @@ export const setMemoryLevel = async (
   level: number,
   db: Db
 ): Promise<IUser | null> => {
-  const mongodb = db.collection(config.mongo.USER_COLLECTION);
+  const userCollection = config.mongo.USER_COLLECTION;
+  const mongodb = db.collection(userCollection);
   await mongodb.updateOne({ id }, { $set: { memoryLevel: level } });
   const user: IUser | null = await mongodb.findOne({ id });
+  if (!user) return null;
   const history = user?.memories.filter(value => {
     if (value.levelBlock <= user.memoryLevel) return value;
   });

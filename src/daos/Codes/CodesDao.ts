@@ -18,7 +18,7 @@ export const useCode = async (
   const codeValue: ICode | null = await codesCollection.findOne({
     code
   });
-  if (codeValue?.used) {
+  if (!codeValue || codeValue.used) {
     return null;
   }
   const user: IUser | null = await userCollection.findOne({ id: userId });

@@ -11,7 +11,7 @@
     "lint": "tslint --project \"tsconfig.json\"",
     "start": "node -r module-alias/register  -r dotenv/config ./dist dotenv_config_path=./env/development.env",
     "start:dev": "nodemon --config nodemon.json",
-    "start:dev:debug": "node --inspect-brk -r dotenv/config -r ts-node/register -r tsconfig-paths/register src/index.ts dotenv_config_path=./env/development.env  --env=development",
+    "start:dev:debug": "node --inspect-brk -r dotenv/config -r ts-node/register -r tsconfig-paths/register src/index.ts dotenv_config_path=./env/development.env --env=development",
     "test": "nodemon --config nodemon.test.json",
     "semantic-release": "semantic-release"
   },

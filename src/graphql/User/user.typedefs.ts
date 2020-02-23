@@ -13,9 +13,24 @@ export const userTypeDefs = gql`
     details: String
   }
 
+  input MemoryInput {
+    id: ID!
+    levelBlock: Int
+    title: String
+    details: String
+  }
+
   type Mutation {
+    insertMemories(id: ID, memories: [MemoryInput]): User
+    newUser(user: UserInput): User
     setMemoryLevel(id: ID, level: Int): User
     setNewMemory(id: ID, level: Int): User
+  }
+
+  input UserInput {
+    id: ID!
+    name: String
+    email: String
   }
 
   type User @key(fields: "id") {
