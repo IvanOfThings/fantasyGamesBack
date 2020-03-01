@@ -25,6 +25,7 @@ export const userTypeDefs = gql`
     newUser(user: UserInput): User
     setMemoryLevel(id: ID, level: Int): User
     setNewMemory(id: ID, level: Int): User
+    setNewLocation(id: ID, location: String): User
   }
 
   input UserInput {
@@ -39,5 +40,6 @@ export const userTypeDefs = gql`
     email: String
     memoryLevel: Int
     memories: [Memory]!
+    transported: String
   }
 `;

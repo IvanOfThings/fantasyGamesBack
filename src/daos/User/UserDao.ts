@@ -1,6 +1,8 @@
 import { config } from '@config';
 import { IInputUser, IMemory, IUser } from '@entities';
 import { Db } from 'mongodb';
+import TelegramBot = require('node-telegram-bot-api');
+import { logger } from '@shared';
 
 /**
  * Allows to create a new user
@@ -107,6 +109,45 @@ export const setMemoryLevel = async (
   return {
     ...user,
     memories: history
+  } as IUser;
+};
+
+/**
+ * Sets the new memory level to the user
+ * @param id user Id to update
+ * @param locations Map of known locations
+ * @param locationCode location code to user
+ * @param db Databases
+ * @param bot telegram bot
+ */
+export const setNewLocation = async (
+  id: string,
+  locations: Map<string, string>,
+  locationCode: string,
+  db: Db,
+  bot: TelegramBot | null
+): Promise<IUser | null> => {
+  const userCollection = config.mongo.USER_COLLECTION;
+  const mongodb = db.collection(userCollection);
+  const user: IUser | null = await mongodb.findOne({ id });
+
+  logger.debug(locationCode);
+  const location = locations.get(locationCode);
+  if (!location) throw 'The location does not exist';
+  if (!user) throw 'User not found';
+  if (user.transported)
+    throw `User has been transported already to ${user.transported}`;
+
+  await mongodb.updateOne({ id }, { $set: { transported: location } });
+
+  if (bot) {
+    bot.sendMessage(
+      config.telegram.CHATID,
+      `El usuario ${user.name} ha sido transportado a ${location} por tanto ya no se encuentra en la casa.`
+    );
+  }
+  return {
+    ...user
   } as IUser;
 };
 

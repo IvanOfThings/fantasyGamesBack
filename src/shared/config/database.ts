@@ -7,10 +7,14 @@ let mongoClientInstance: MongoClient;
 export const getMongoClientInstance = async (): Promise<Db> => {
   if (!mongoClientInstance || !mongoClientInstance.isConnected()) {
     logger.debug(`Connecting to MongoDB on ${config.mongo.MONGO_URL}...`);
-    mongoClientInstance = await MongoClient.connect(config.mongo.MONGO_URL, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    });
+    try {
+      mongoClientInstance = await MongoClient.connect(config.mongo.MONGO_URL, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+      });
+    } catch (error) {
+      logger.error('Something went wrong connecting to mongo');
+    }
   }
 
   return mongoClientInstance.db();

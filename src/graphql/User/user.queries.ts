@@ -3,6 +3,7 @@ import { IInputUser } from '@entities';
 import { IResolverObject } from 'graphql-tools';
 import { IResolvers } from 'graphql-tools';
 import { IContext } from '../../Server';
+import { logger } from '@shared';
 
 export const userResolver: IResolvers = {
   Query: {
@@ -25,6 +26,13 @@ export const userResolver: IResolvers = {
     },
     setNewMemory: (parent: any, { id, memory }: any, { db }: IContext) => {
       return UserDao.setNewMemory(id, memory, db);
+    },
+    setNewLocation: (
+      parent: any,
+      { id, location }: any,
+      { locations, db, bot }: IContext
+    ) => {
+      return UserDao.setNewLocation(id, locations, location, db, bot);
     }
   }
 };

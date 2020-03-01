@@ -10,42 +10,74 @@ import { Request, Response } from 'express';
 import path from 'path';
 import { typeDefs, resolvers } from './graphql';
 import { logger } from '@shared';
-import { config } from '@config';
+import { config, IConfig } from '@config';
+import TelegramBot from 'node-telegram-bot-api';
+
+const locationCodes: Map<string, string> = new Map();
+locationCodes.set('asdfsd32t4', 'Carcel Interdimensional');
+locationCodes.set('a54df235r4', 'Agujero de los bandoleros');
+locationCodes.set('b54dsd25u4', 'Agujero de los rufianes');
+locationCodes.set('3534456lp4', 'Piso franco');
 
 export interface IContext {
   db: Db;
+  config: IConfig;
+  bot: TelegramBot | null;
+  gameID: string;
+  locations: Map<string, string>;
 }
 
 export async function init() {
   logger.info(config.mongo.MONGO_URL);
-  const db: Db = await getMongoClientInstance();
+  try {
+    const db: Db = await getMongoClientInstance();
 
-  const expressApp = express();
+    // Creamos una constante que guarda el Token de nuestro Bot de Telegram que previamente hemos creado desde el bot @BotFather
+    const token = config.telegram.T_TOKEN;
 
-  const server = new ApolloServer({
-    schema: buildFederatedSchema([
-      {
-        typeDefs,
-        resolvers: resolvers as GraphQLResolverMap<any>
+    // Create a bot that uses 'polling' to fetch new updates
+    const bot = new TelegramBot(token, { polling: true });
+
+    /*
+    bot.onText(/^\/chatid/, msg => {
+      const chatId = msg.chat.id;
+      bot.sendMessage(chatId, 'El id de este chat es: ' + chatId);
+    });
+  */
+    const expressApp = express();
+
+    const server = new ApolloServer({
+      schema: buildFederatedSchema([
+        {
+          typeDefs,
+          resolvers: resolvers as GraphQLResolverMap<any>
+        }
+      ]),
+      context: ({ req, res }): IContext => {
+        return {
+          db,
+          config,
+          bot,
+          gameID: '1',
+          locations: locationCodes
+        };
       }
-    ]),
-    context: ({ req, res }): IContext => {
-      return {
-        db
-      };
-    }
-  });
+    });
 
-  server.applyMiddleware({
-    app: expressApp,
-    path: '/graphql'
-  });
+    server.applyMiddleware({
+      app: expressApp,
+      path: '/graphql'
+    });
 
-  // Start the server
-  const port = Number(process.env.PORT || 3000);
-  expressApp.listen(port, () => {
-    logger.info('Express server started on port: ' + port);
-  });
+    // Start the server
+    const port = Number(process.env.PORT || 3000);
+    expressApp.listen(port, () => {
+      logger.info('Express server started on port: ' + port);
+    });
+  } catch (error) {
+    logger.crit('Critical error');
+    logger.crit(error);
+  }
 
   // Add middleware/settings/routes to express.
   // app.use(logger('dev'));

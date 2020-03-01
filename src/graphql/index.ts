@@ -2,6 +2,7 @@ import { gql, IResolvers } from 'apollo-server';
 import { mergeResolvers, mergeTypes } from 'merge-graphql-schemas';
 import { codeResolver, codeTypeDefs } from './Code';
 import { userResolver, userTypeDefs } from './User';
+import { telegramBotResolver, telegramBotTypeDefs } from './TelegramBot';
 /*
 export const mergedResolvers: IResolvers = {
   ...userResolver.Query,
@@ -10,15 +11,11 @@ export const mergedResolvers: IResolvers = {
 };*/
 
 export const resolvers = mergeResolvers([
-  { Query: userResolver.Query },
-  {
-    Mutation: {
-      ...(userResolver.Mutation as IResolvers),
-      ...(codeResolver.Mutation as IResolvers)
-    }
-  }
+  userResolver,
+  codeResolver,
+  telegramBotResolver
 ]);
 
 export const typeDefs = gql`
-  ${mergeTypes([userTypeDefs, codeTypeDefs])}
+  ${mergeTypes([userTypeDefs, codeTypeDefs, telegramBotTypeDefs])}
 `;

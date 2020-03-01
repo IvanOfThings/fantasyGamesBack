@@ -16,6 +16,7 @@ export interface IUser {
   email: string;
   memoryLevel: number;
   memories: IMemory[];
+  transported: string;
 }
 
 export class User implements IUser {
@@ -24,13 +25,15 @@ export class User implements IUser {
   public email: string;
   public memoryLevel: number;
   public memories: IMemory[];
+  public transported: string;
 
   constructor(
     nameOrUser: string | IUser,
     id?: string,
     email?: string,
     memoryLevel?: number,
-    memories?: IMemory[]
+    memories?: IMemory[],
+    transported?: string
   ) {
     if (typeof nameOrUser === 'string') {
       this.id = id!;
@@ -38,12 +41,14 @@ export class User implements IUser {
       this.email = email || '';
       this.memoryLevel = memoryLevel || 0;
       this.memories = memories || [];
+      this.transported = transported || '';
     } else {
       this.id = nameOrUser.id;
       this.name = nameOrUser.name;
       this.email = nameOrUser.email;
       this.memoryLevel = nameOrUser.memoryLevel;
       this.memories = nameOrUser.memories;
+      this.transported = nameOrUser.transported;
     }
   }
 }
