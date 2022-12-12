@@ -33,7 +33,7 @@
     "cookie-parser": "^1.4.4",
     "date-fns": "^2.10.0",
     "dotenv": "^8.2.0",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "graphql-tools": "^4.0.6",
     "http-status-codes": "^1.4.0",
     "merge-graphql-schemas": "^1.7.6",
